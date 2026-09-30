@@ -1,0 +1,36 @@
+{
+  "name": "friends-included-finance",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "telegram:poll": "node --env-file=.env.local --conditions=react-server --import tsx scripts/telegram-poll.ts",
+    "telegram:webhook": "node --env-file=.env.local --conditions=react-server --import tsx scripts/configure-telegram-webhook.ts",
+    "test:phase3": "node --env-file=.env.local --conditions=react-server --import tsx scripts/phase3-check.ts",
+    "sheets:setup": "node --env-file=.env.local --conditions=react-server --import tsx scripts/setup-google-sheets.ts",
+    "sheets:worker": "node --env-file=.env.local --conditions=react-server --import tsx scripts/sheets-worker.ts",
+    "test:phase4": "node --env-file=.env.local --conditions=react-server --import tsx scripts/phase4-check.ts",
+    "test:phase5": "node --env-file=.env.local --conditions=react-server --import tsx scripts/phase5-check.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.0.0"
+  }
+}

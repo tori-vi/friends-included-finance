@@ -1,0 +1,9 @@
+import { AppShell } from "@/components/app-shell";
+import { currentDemonstrationEmployee } from "@/lib/authorization";
+import { createExpense } from "@/app/actions";
+
+export default async function ExpensesPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string }> }) {
+  const employee = await currentDemonstrationEmployee(); const message = await searchParams; const allowed = employee?.role === "expense_reporter";
+  return <AppShell employee={employee}><section className="page-lead"><p className="eyebrow">Expense entry</p><h2>New expense</h2><p className="muted">All expenses affect company result immediately. A and B allocations await Svetlana; overhead is allocated automatically.</p></section>{message.error && <p className="error">{message.error}</p>}{message.success && <p className="success">{message.success}</p>}
+    {allowed ? <form action={createExpense} className="form-card"><div className="form-grid"><label>Reference<input name="reference" placeholder="e.g. EXP-001" required /></label><label>Amount (€)<input name="amount" type="number" min="0.01" step="0.01" required /></label><label>Category<select name="category" defaultValue="" required><option value="" disabled>Choose category</option><option value="materials">Materials</option><option value="travel">Travel</option><option value="other">Other</option></select></label><label>Proposed allocation<select name="allocation" defaultValue="" required><option value="" disabled>Choose allocation</option><option value="A">A — Respectable Relatives</option><option value="B">B — Drunk University Friends</option><option value="company_overhead">Company overhead</option></select></label></div><label>Description<textarea name="description" required /></label><button className="primary">Save expense</button></form> : <p className="locked">Only Kevin can submit expenses. This is also enforced in the server action.</p>}</AppShell>;
+}

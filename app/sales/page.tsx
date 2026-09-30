@@ -1,0 +1,10 @@
+import { AppShell } from "@/components/app-shell";
+import { currentDemonstrationEmployee } from "@/lib/authorization";
+import { createSale } from "@/app/actions";
+
+export default async function SalesPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string }> }) {
+  const employee = await currentDemonstrationEmployee(); const message = await searchParams;
+  const allowed = employee?.role === "salesperson";
+  return <AppShell employee={employee}><section className="page-lead"><p className="eyebrow">Sales entry</p><h2>New sale</h2><p className="muted">Sales are saved as Pending approval and do not affect financial results until Svetlana approves them.</p></section>{message.error && <p className="error">{message.error}</p>}{message.success && <p className="success">{message.success}</p>}
+    {allowed ? <form action={createSale} className="form-card"><div className="form-grid"><label>Reference<input name="reference" placeholder="e.g. SALE-001" required /></label><label>Customer<input name="customer" required /></label><label>Project<select name="project" required defaultValue=""><option value="" disabled>Choose project</option><option value="A">A — Respectable Relatives</option><option value="B">B — Drunk University Friends</option></select></label><label>Amount (€)<input name="amount" type="number" min="0.01" step="0.01" required /></label></div><label>Description<textarea name="description" required /></label><fieldset><legend>Proposed commission split — must total 100%</legend><div className="form-grid three"><label>Richard %<input name="richard" type="number" min="0" max="100" step="0.01" required /></label><label>Anastasia %<input name="anastasia" type="number" min="0" max="100" step="0.01" required /></label><label>Jean-Claude %<input name="jeanClaude" type="number" min="0" max="100" step="0.01" required /></label></div></fieldset><button className="primary">Save sale for approval</button></form> : <p className="locked">Only the three salespeople can submit sales. This is also enforced in the server action.</p>}</AppShell>;
+}
