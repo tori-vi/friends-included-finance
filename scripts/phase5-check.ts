@@ -1,7 +1,12 @@
 import { POST, GET } from '../app/api/telegram/webhook/route';
 
-const secret=process.env.TELEGRAM_WEBHOOK_SECRET;
-if(!secret) throw new Error('Webhook secret missing.');
+function requiredEnvironmentValue(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} is missing.`);
+  return value;
+}
+
+const secret = requiredEnvironmentValue('TELEGRAM_WEBHOOK_SECRET');
 const request=(header:string,body:string)=>new Request('https://example.invalid/api/telegram/webhook',{method:'POST',headers:{'content-type':'application/json','x-telegram-bot-api-secret-token':header},body});
 async function main(){
   const unauthorized=await POST(request('wrong-secret','{}'));
