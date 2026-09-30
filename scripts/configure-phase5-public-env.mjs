@@ -2,7 +2,7 @@ import { chmodSync, readFileSync, writeFileSync } from 'node:fs';
 
 const path = '.env.local';
 const values = {
-  NEXT_PUBLIC_APP_URL: 'https://friends-included-finance.vercel.app',
+  NEXT_PUBLIC_APP_URL: 'https://friends-included-finance-jet-five.vercel.app',
   NEXT_PUBLIC_OWNER_NAME: 'Viktorija Skrinda',
   NEXT_PUBLIC_GITHUB_URL: 'https://github.com/tori-vi/friends-included-finance',
   NEXT_PUBLIC_TELEGRAM_BOT_URL: 'https://t.me/friends_included_homework_bot',
