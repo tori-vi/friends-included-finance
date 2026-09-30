@@ -6,6 +6,7 @@ const values = {
   NEXT_PUBLIC_OWNER_NAME: 'Viktorija Skrinda',
   NEXT_PUBLIC_GITHUB_URL: 'https://github.com/tori-vi/friends-included-finance',
   NEXT_PUBLIC_TELEGRAM_BOT_URL: 'https://t.me/friends_included_homework_bot',
+  TELEGRAM_WEBHOOK_URL: 'https://friends-included-finance-jet-five.vercel.app/api/telegram/webhook',
 };
 
 const lines = readFileSync(path, 'utf8').split(/\r?\n/);

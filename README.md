@@ -14,7 +14,7 @@ An intentionally simple finance system for the fictional **Friends Included Ltd*
 - [x] Build the website forms, manager decisions, dashboard queries, visibility rules, and Supabase persistence.
 - [x] Connect Telegram bot identity setup, submissions, confirmations, and decision retries.
 - [x] Connect Google Sheets two-tab upsert/retry sync.
-- [ ] Deploy to Vercel, enter the supplied test data, test permissions/failures, and submit the final URL.
+- [x] Publish the safe source to GitHub and deploy the integrated application to Vercel. Official S01–S05/E01–E07 records remain intentionally deferred.
 
 ## What Phase 1 contains
 
@@ -87,11 +87,9 @@ The website role selector is intentionally demonstration access, not production 
 - Delivery claims prevent simultaneous workers from sending the same event. An interrupted attempt becomes claimable after 90 seconds. Telegram cannot guarantee exactly-once message delivery after a lost network response: a retry may repeat a message, but never the financial transaction.
 - Nonfinancial help/error replies can be requested again by resending the command. Polling does not advance past a transport failure. No fake messages replace Telegram API calls.
 
-## Later deployment (not done in Phase 3)
+## Production Telegram webhook
 
-Local polling needs no public URL. Before Vercel deployment, add a server-only HTTPS webhook handler (for example `/api/telegram/webhook`) calling `processTelegramUpdate`, authenticate Telegram's `X-Telegram-Bot-Api-Secret-Token` header against a strong `TELEGRAM_WEBHOOK_SECRET`, and persist/deduplicate incoming updates. Then stop the local poller and register the exact public HTTPS URL using Telegram `setWebhook` with `secret_token`. Never expose a public polling or token endpoint. Configure a scheduled outbox drain and the same private Supabase/bot environment variables on Vercel. Do not run polling and webhooks together.
-
-Google Sheets, GitHub publication, Vercel deployment, and official S01–S05/E01–E07 tests are still deferred. Telegram manager-decision notifications are implemented already; rerun them with the official tests after the remaining integrations are ready.
+Production uses `/api/telegram/webhook`, validates Telegram's secret header, and calls the same `processTelegramUpdate` service as local polling. Run `npm run telegram:webhook` after changing the production URL or bot token; never run the local poller while the webhook is active. The official S01–S05/E01–E07 tests remain deferred.
 
 ## Phase 3 verification
 
@@ -117,4 +115,16 @@ Set `GOOGLE_SHEETS_SPREADSHEET_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`, and `GOOGLE_
 
 Rows are found by reference, not appended. Database-reserved row numbers protect new rows against duplicate concurrent retries. Keep this export spreadsheet read-only for human viewers: do not insert/delete/reorder rows or manually edit references. A conflicting row is reported as failed instead of overwriting another transaction. Blank gaps between records are safe. Pending sales export blank approved percentages and zero commissions. Google failure never rolls back financial data.
 
-Verified locally against the real Supabase project and real Google spreadsheet: create, decision update, visible failure, retry, repeated-retry idempotency, and manager-only retry. Temporary test transactions and rows were removed. Deployment must later arrange a protected scheduled queue runner; no deployment has been started.
+Verified against the real Supabase project and real Google spreadsheet: create, decision update, visible failure, retry, repeated-retry idempotency, and manager-only retry. Normal Vercel requests attempt sync immediately; failed jobs remain durable and Svetlana can retry them from `/sheets`. Temporary test transactions and rows were removed.
+
+---
+# Phase 5 — published deployment
+
+- Live site: https://friends-included-finance-jet-five.vercel.app
+- GitHub: https://github.com/tori-vi/friends-included-finance
+- Telegram: https://t.me/friends_included_homework_bot
+- Google Sheets: https://docs.google.com/spreadsheets/d/1n9s0iklJ_HCAivHjEFXgL4gvx79cDSRHz9ye9mrY4Rc/edit
+
+The Vercel Hobby project is connected to `main`. Production secrets are stored only in Vercel's environment settings and ignored `.env.local`; public site metadata uses `NEXT_PUBLIC_` variables. Telegram runs through the HTTPS webhook, so the instructor does not need a local process. The deployed smoke test covered one website sale, one Telegram expense, both manager decisions, calculated dashboard totals, Sheets create/update, Telegram confirmation and decision delivery, and cleanup. Its temporary Supabase records and Sheet rows were removed; Telegram test messages remain as delivery evidence.
+
+Before the official test, share the Google spreadsheet as Viewer with the instructor's specific Google email address. Then enter only the assignment's official S01–S05 and E01–E07 records.
