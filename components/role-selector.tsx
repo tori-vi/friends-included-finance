@@ -1,21 +1,22 @@
 "use client";
 
-import { useTransition } from "react";
+import { useFormStatus } from "react-dom";
 import { selectDemonstrationRole } from "@/app/actions";
 import { demonstrationEmployees, type DemonstrationEmployee } from "@/lib/employees";
 
-export function RoleSelector({ employee }: { employee: DemonstrationEmployee | null }) {
-  const [pending, startTransition] = useTransition();
-  return <form action={selectDemonstrationRole} className="role-form" aria-busy={pending}>
+function RoleFields({ employee }: { employee: DemonstrationEmployee | null }) {
+  const { pending } = useFormStatus();
+  return <>
     <label htmlFor="employeeId">Demonstration role</label>
-    <select id="employeeId" name="employeeId" value={employee?.id ?? ""} disabled={pending} onChange={(event) => {
-      const formData = new FormData();
-      formData.set("employeeId", event.currentTarget.value);
-      startTransition(async () => { await selectDemonstrationRole(formData); });
-    }}>
+    <select key={employee?.id ?? ""} id="employeeId" name="employeeId" defaultValue={employee?.id ?? ""} disabled={pending} required>
       <option value="" disabled>Select a fictional employee</option>
       {demonstrationEmployees.map((item) => <option key={item.id} value={item.id}>{item.name} — {item.role.replace("_", " ")}</option>)}
     </select>
-    <span role="status" aria-live="polite">{pending ? "Switching role…" : ""}</span>
-  </form>;
+    <button type="submit" disabled={pending}>{pending ? "Switching role…" : "Use role"}</button>
+    <span role="status" aria-live="polite">{pending ? "Waiting for role confirmation." : "Choose a role, then press Use role."}</span>
+  </>;
+}
+
+export function RoleSelector({ employee }: { employee: DemonstrationEmployee | null }) {
+  return <form action={selectDemonstrationRole} className="role-form"><RoleFields employee={employee} /></form>;
 }
